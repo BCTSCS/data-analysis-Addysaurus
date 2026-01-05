@@ -25,8 +25,10 @@ public class TextProcessor {
   public void removeStopWords(ArrayList<String> stopWords) {
     for (String post : textList) {
       ArrayList<String> words = FileOperator.getWords(post);
-      for (int i = 0; i < words.length; i ++) {
-        
+      for (int i = 0; i < words.size(); i ++) {
+        if (stopWords.contains(words.get(i))) {
+          words.remove(i);
+        }
       }
     }
   }
