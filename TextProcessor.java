@@ -23,12 +23,13 @@ public class TextProcessor {
    * Finds and removes all occurrences of each stop word from textList
    */
   public void removeStopWords(ArrayList<String> stopWords) {
-    for (String post : textList) {
-      ArrayList<String> words = FileOperator.getWords(post);
-      for (int i = 0; i < words.size(); i ++) {
-        if (stopWords.contains(words.get(i))) {
-          words.remove(i);
-        }
+    for (String stop : stopWords) {
+      for (int i = 0; i < textList.size(); i ++) {
+        String line = textList.get(i);
+        line = line.toLowerCase().replaceAll(" " + stop + " ", "");
+        line = line.toLowerCase().replaceAll(" " + stop + "\n", "");
+        line = line.toLowerCase().startsWith(stop) ? line.toLowerCase().replace(stop + " ", "") : line;
+        textList.set(i, line);
       }
     }
   }
@@ -46,10 +47,10 @@ public class TextProcessor {
   }
 
     public static void main(String[] args) {
-        ArrayList<String> stopwords = FileOperator.getStringList("stopwords.txt");
-        ArrayList<String> posts = FileOperator.getStringList("posts.txt");
-        TextProcessor t = new TextProcessor(posts);
-        t.removeStopWords(stopwords);
-        System.out.println(t.toString());
+      ArrayList<String> stopwords = FileOperator.getStringList("stopwords.txt");
+      ArrayList<String> posts = FileOperator.getStringList("posts.txt");
+      TextProcessor t = new TextProcessor(posts);
+      t.removeStopWords(stopwords);
+      System.out.println(t.toString());
     }
 }
