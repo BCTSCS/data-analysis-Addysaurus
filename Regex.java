@@ -28,13 +28,17 @@ public class Regex {
             matched_substrings_capital.add(matcher_capital.group());
         }
         System.out.println(matched_substrings_capital);
+
         Pattern pattern_number = Pattern.compile("[0-9]{0,}\\.?[0-9]{0,}");
         Matcher matcher_number = pattern_number.matcher(sample_text);
         ArrayList<String> matched_substrings_number = new ArrayList<>();
         while (matcher_number.find()) {
-            matched_substrings_number.add(matcher_number.group());
+            if (matcher_number.group() != "") {
+                matched_substrings_number.add(matcher_number.group());
+            }
         }
         System.out.println(matched_substrings_number);
+
         Pattern pattern_words_lengths = Pattern.compile("[a-zA-Z]{7}");
         //You can change that number to whatever you want, I just set it to 7 arbitrarily
         Matcher matcher_words_lengths = pattern_words_lengths.matcher(sample_text);
@@ -43,6 +47,7 @@ public class Regex {
             matched_substrings_words_lengths.add(matcher_words_lengths.group());
         }
         System.out.println(matched_substrings_words_lengths);
+        
         Pattern pattern_repeated = Pattern.compile("\\b(\\w+)\\b(?:\\W+\\1\\b)+");
         //You can change that number to whatever you want, I just set it to 7 arbitrarily
         Matcher matcher_repeated = pattern_repeated.matcher(sample_text);
