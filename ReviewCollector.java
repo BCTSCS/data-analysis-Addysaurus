@@ -20,17 +20,28 @@ public class ReviewCollector {
     }
 
     public int getNumGoodReviews(String prodName) {
+        int goodCount = 0;
+
         for (ProductReview p : reviewList) {
-            String r = p.getReview();
-            String[] words = r.split(" ");
-            double total = 0;
-            for (String word : words) {
-                
+            if (p.getName().equals(prodName)) {
+                String review = p.getReview();
+                String[] words = review.split(" ");
+                double total = 0;
+                for (String word : words) {
+                    total += getSentiments(word);
+                }
+                if (total > 1) {
+                    goodCount += 1;
+                }
             }
         }
+        return goodCount;
     }
 
-    public void getSentiments(String word) {
+    public double getSentiments(String wordSearch) {
+       // Read lines from sentiments.txt
+        ArrayList<String> lines = FileOperator.getStringList("sentiments.txt");
+
         // Regex pattern to match word,decimal pairs
         Pattern pattern = Pattern.compile("([a-zA-Z0-9]+),(-?\\d+\\.\\d+)");
 
@@ -40,41 +51,13 @@ public class ReviewCollector {
             if (matcher.find()) {
                 String word = matcher.group(1); // Extract the word
                 Double value = Double.parseDouble(matcher.group(2)); // Extract the value
-
-                // Add to instance variables
-                words.add(word);
-                values.add(value);
-
-                // Print the result
-                System.out.println(word + "   ----  " + value);
-   
+                if(wordSearch.equals(word)){
+                    System.out.println(word + "   ----  " + value);
+                    return value;
+                }
             }
+         
         }
-    }
-
-    public static void main(String[] args) {
-        ReviewCollector reviewCollector= new ReviewCollector();
-        ArrayList<String> lines = FileOperator.getStringList("product.txt");
-        Pattern productPattern = Pattern.compile("Product:\\s*(.+)");
-        Pattern reviewPattern = Pattern.compile("Review:\\s*(.+)");
-
-        String productName = null;
-        String review =null;
-        for (String line : lines) {
-            Matcher productMatcher = productPattern.matcher(line);
-            Matcher reviewMatcher = reviewPattern.matcher(line);
-
-            if (productMatcher.find()) {
-                productName = productMatcher.group(1);
-            } else if (reviewMatcher.find()) {
-                review = reviewMatcher.group(1);
-            }
-            
-            if (productName!=null &review!=null ){
-                ProductReview product = new ProductReview(productName, review);
-                reviewCollector.addReview(product);
-                System.out.println(product);
-            }
-        }
-    }
+        return 0.0;
+   }
 }
