@@ -6,6 +6,8 @@ public class ArticleAnalyzer {
 
     private ArrayList<String> stopWords; //load from FileOperators
     private ArrayList<Article> articles; //load from FileOperators json 
+    private static ArrayList<String> words;
+    private static ArrayList<Double> sentiments;
 
     public ArticleAnalyzer() {
         stopWords = FileOperator.getStringList("stopwords.txt");
@@ -16,7 +18,9 @@ public class ArticleAnalyzer {
 
     public void addStopWord(String word) {};
 
-    public void addArticle(Article article) {};
+    public void addArticle(Article article) {
+        articles.add(article);
+    };
 
     public Article parseJson(String jsonLine) {
         Article result;
@@ -50,15 +54,38 @@ public class ArticleAnalyzer {
     }; //use Pattern and matcher to create 
 
     public String removeStopWords(String text) {
-        return null;
-    }; //remove stop words from Description
+        for (String word : stopWords) {
+            text = text.replaceAll("\\b" + word + "\\b", "");
+            text = text.replaceAll("  ", " ");
+        }
+        return text;
+    };
 
     public static void main(String[] args) {
-        ArticleAnalyzer analyzer = new ArticleAnalyzer();
-        ArrayList<String> lines = FileOperator.getStringList("data.txt");
-        String line = lines.get(0);
-        Article a = analyzer.parseJson(line);
-        System.out.println(a);
+        // ArticleAnalyzer analyzer = new ArticleAnalyzer();
+        // ArrayList<String> lines = FileOperator.getStringList("data.txt");
+        // for (String line : lines) {
+        //     Article a = analyzer.parseJson(line);
+        //     String clean = analyzer.removeStopWords(a.getDescription());
+        //     a.setDescription(clean);
+        //     analyzer.addArticle(a);
+        //     System.out.println(a.getDescription());
+        // }
+        ArrayList<String> lines = FileOperator.getStringList("sentiments.txt");
+        words = new ArrayList<>();
+        sentiments = new ArrayList<>();
+        for (String line : lines) {
+            Pattern w = Pattern.compile("([A-Za-z0-9]+)");  //r write regex to extract the word before, and value after
+            Pattern s = Pattern.compile("(-?\\d+\\.?\\d*)");  //r write regex to extract the word before, and value after
+            Matcher wm = w.matcher(line); //parameter - line of text
+            Matcher sm = s.matcher(line); //parameter - line of text
+            boolean wfound = wm.find(); 
+            boolean sfound = sm.find(); 
+            String word = wfound ? wm.group(1) : ""; 
+            Double value = sfound ? Double.parseDouble(sm.group(1)) : 0.00;
+            words.add(word);
+            sentiments.add(value);
+            System.out.println(word + "   ----  " + value);
+        }
     }
-
 }
